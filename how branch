@@ -1,0 +1,153 @@
+[33mcommit a570b4fd0513b607b3551ebd5a3c6ad14aa66480[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mwatchlist[m[33m)[m
+Author: ASUS FPT <Vinhngo28102005@gmail.com>
+Date:   Sun May 24 08:29:25 2026 +0700
+
+    nhanh1
+
+[1mdiff --git a/.idea/planningMode.xml b/.idea/planningMode.xml[m
+[1mindex 8d0d619..512c81e 100644[m
+[1m--- a/.idea/planningMode.xml[m
+[1m+++ b/.idea/planningMode.xml[m
+[36m@@ -5,6 +5,7 @@[m
+       <map>[m
+         <entry key="20260523-003637-05b7c96e-5f63-4acc-b640-896bddb90531" value="true" />[m
+         <entry key="20260524-013011-40887320-0cc2-4ad1-928e-a68ba70e5e18" value="true" />[m
+[32m+[m[32m        <entry key="20260524-080819-78bd4d73-a729-4d9b-abff-4f4ae45ad51a" value="true" />[m
+       </map>[m
+     </option>[m
+   </component>[m
+[1mdiff --git a/app/src/main/java/com/example/flickfind_ltttbdd/navigation/NavGraph.kt b/app/src/main/java/com/example/flickfind_ltttbdd/navigation/NavGraph.kt[m
+[1mindex 0809e44..3f2708a 100644[m
+[1m--- a/app/src/main/java/com/example/flickfind_ltttbdd/navigation/NavGraph.kt[m
+[1m+++ b/app/src/main/java/com/example/flickfind_ltttbdd/navigation/NavGraph.kt[m
+[36m@@ -1,23 +1,19 @@[m
+ package com.example.flickfind_ltttbdd.navigation[m
+ [m
+[31m-[m
+[31m-import android.net.http.SslCertificate.saveState[m
+ import androidx.compose.foundation.layout.padding[m
+ import androidx.compose.material.icons.Icons[m
+ import androidx.compose.material.icons.filled.Home[m
+ import androidx.compose.material3.*[m
+ import androidx.compose.runtime.*[m
+ import androidx.compose.ui.Modifier[m
+[31m-import androidx.compose.ui.graphics.Color[m
+ import androidx.compose.ui.platform.LocalContext[m
+ import androidx.compose.ui.unit.dp[m
+ import androidx.lifecycle.viewmodel.compose.viewModel[m
+ import androidx.navigation.NavGraph.Companion.findStartDestination[m
+ import androidx.navigation.NavHostController[m
+[31m-import androidx.navigation.compose.NavHost[m
+[31m-import androidx.navigation.compose.composable[m
+[31m-import androidx.navigation.compose.currentBackStackEntryAsState[m
+[31m-import androidx.navigation.compose.rememberNavController[m
+[32m+[m[32mimport androidx.navigation.NavType[m
+[32m+[m[32mimport androidx.navigation.compose.*[m
+[32m+[m[32mimport androidx.navigation.navArgument[m
+ import com.example.flickfind_ltttbdd.ui.viewmodel.AppViewModelProvider[m
+ import com.example.flickfind_ltttbdd.ui.viewmodel.HomeViewModel[m
+ import com.example.flickfind_ltttbdd.ui.viewmodel.ProfileViewModel[m
+[36m@@ -31,19 +27,24 @@[m [mfun MainNavGraph() {[m
+     val currentRoute = navBackStackEntry?.destination?.route[m
+ [m
+     // Chỉ hiển thị Bottom Bar ở 3 màn hình chính[m
+[31m-    val showBottomBar = currentRoute in listOf([m
+[32m+[m[32m    val rootScreens = listOf([m
+         Screen.Home.route,[m
+         Screen.Profile.route,[m
+         Screen.Settings.route[m
+     )[m
+[32m+[m[32m    val showBottomBar = currentRoute in rootScreens[m
+ [m
+     Scaffold([m
+[31m-        bottomBar = { AppBottomNavigationBar(navController) }[m
+[32m+[m[32m        bottomBar = {[m
+[32m+[m[32m            if (showBottomBar) {[m
+[32m+[m[32m                AppBottomNavigationBar(navController)[m
+[32m+[m[32m            }[m
+[32m+[m[32m        }[m
+     ) { innerPadding ->[m
+         NavHost([m
+             navController = navController,[m
+             startDestination = Screen.Home.route,[m
+[31m-            modifier = Modifier.padding(if (showBottomBar) innerPadding else PaddingValues(0.dp))[m
+[32m+[m[32m            modifier = Modifier.padding(innerPadding)[m
+         ) {[m
+             // 1. Màn hình Trang chủ[m
+             composable(Screen.Home.route) {[m
+[36m@@ -52,23 +53,45 @@[m [mfun MainNavGraph() {[m
+                 HomeScreen(viewModel = homeViewModel, navController = navController)[m
+             }[m
+ [m
+[31m-            // 2. Màn hình Cá nhân (Tích hợp Đăng nhập/Đăng ký tại chỗ)[m
+[32m+[m[32m            // 2. Màn hình Cá nhân[m
+             composable(Screen.Profile.route) {[m
+                 val context = LocalContext.current[m
+                 val profileViewModel: ProfileViewModel = viewModel([m
+                     factory = AppViewModelProvider(context)[m
+                 )[m
+[31m-                ProfileScreen(viewModel = profileViewModel)[m
+[32m+[m[32m                ProfileScreen([m
+[32m+[m[32m                    viewModel = profileViewModel,[m
+[32m+[m[32m                    navController = navController[m
+[32m+[m[32m                )[m
+             }[m
+ [m
+[31m-            // Màn hình 3: Cài đặt[m
+[32m+[m[32m            // 3. Màn hình Cài đặt[m
+             composable(Screen.Settings.route) {[m
+[31m-                Text("Màn hình Cài đặt - Đang xây dựng")[m
+[32m+[m[32m                SettingsScreen(navController = navController)[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m            // 4. Màn hình Chi tiết phim[m
+[32m+[m[32m            composable([m
+[32m+[m[32m                route = Screen.Detail.route,[m
+[32m+[m[32m                arguments = listOf(navArgument("movieId") { type = NavType.IntType })[m
+[32m+[m[32m            ) { backStackEntry ->[m
+[32m+[m[32m                val movieId = backStackEntry.arguments?.getInt("movieId") ?: 0[m
+[32m+[m[32m                MovieDetailScreen(movieId = movieId, navController = navController)[m
+             }[m
+         }[m
+     }[m
+ }[m
+ [m
+[32m+[m[32m@Composable[m
+[32m+[m[32mfun SettingsScreen(navController: NavHostController) {[m
+[32m+[m[32m    Text("Màn hình Cài đặt - Đang xây dựng")[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m@Composable[m
+[32m+[m[32mfun MovieDetailScreen(movieId: Int, navController: NavHostController) {[m
+[32m+[m[32m    Text("Chi tiết phim ID: $movieId")[m
+[32m+[m[32m}[m
+[32m+[m
+ @Composable[m
+ fun AppBottomNavigationBar(navController: NavHostController) {[m
+     val navigationItems = listOf([m
+[36m@@ -81,12 +104,10 @@[m [mfun AppBottomNavigationBar(navController: NavHostController) {[m
+         containerColor = MaterialTheme.colorScheme.surface,[m
+         tonalElevation = 8.dp[m
+     ) {[m
+[31m-        // Lấy trạng thái màn hình hiện tại để check làm sáng nút[m
+         val navBackStackEntry by navController.currentBackStackEntryAsState()[m
+         val currentRoute = navBackStackEntry?.destination?.route[m
+ [m
+         navigationItems.forEach { screen ->[m
+[31m-            // ĐIỀU KIỆN LÀM SÁNG: Nếu route trùng khớp thì mục đó sẽ sáng lên[m
+             val isSelected = currentRoute == screen.route[m
+ [m
+             NavigationBarItem([m
+[1mdiff --git a/app/src/main/java/com/example/flickfind_ltttbdd/ui/screens/ProfileScreen.kt b/app/src/main/java/com/example/flickfind_ltttbdd/ui/screens/ProfileScreen.kt[m
+[1mindex 043b5fb..764e92d 100644[m
+[1m--- a/app/src/main/java/com/example/flickfind_ltttbdd/ui/screens/ProfileScreen.kt[m
+[1m+++ b/app/src/main/java/com/example/flickfind_ltttbdd/ui/screens/ProfileScreen.kt[m
+[36m@@ -169,7 +169,7 @@[m [mfun ProfileScreen([m
+                 onDelete = { viewModel.deleteFavorite(movie) },[m
+                 onClick = {[m
+                     if (!isEditMode) {[m
+[31m-                        navController.navigate(Screen.Detail.createRoute(movie.id.toString()))[m
+[32m+[m[32m                        navController.navigate(Screen.Detail.createRoute(movie.id))[m
+                     }[m
+                 }[m
+             )[m

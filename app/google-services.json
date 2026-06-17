@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "540993853705",
+    "project_id": "flickflind",
+    "storage_bucket": "flickflind.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:540993853705:android:6216118dde7b90ffdbdbd8",
+        "android_client_info": {
+          "package_name": "com.example.flickfind_ltttbdd"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDXZpnmuREOrJRgXwi02lImKCEJdxoIbYI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
